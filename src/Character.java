@@ -1,68 +1,62 @@
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Character {
+import static java.lang.Integer.max;
+import static java.lang.Integer.min;
 
+public class Character extends Sprite {
+
+    private int SPEED = 5;
     private int dx;
     private int dy;
-    private int x = 40;
-    private int y = 60;
-    private int w;
-    private int h;
-    private Image image;
+    private List<Missile> missiles;
 
-    public Character() {
-        loadImage();
+    public Character(int x, int y) {
+        super(x, y);
+        initCharacter();
     }
 
-    public void loadImage() {
-        ImageIcon ii = new ImageIcon("src/resources/robo.png");
-        image = ii.getImage();
-
-        w = image.getWidth(null);
-        h = image.getHeight(null);
+    private void initCharacter(){
+        missiles = new ArrayList<>();
+        loadImage("src/resources/robo_small.png");
+        getImageDimensions();
+        x -= width/2;
+        y -= height/2;
     }
 
     public void move() {
-        x += dx;
-        y += dy;
+        if(x + width < 600 && x >= 0) x += dx;
+        if(y + height < 800 && y >= 0) y += dy;
+
+        x = min(max(x,0),599-width);
+        y = min(max(y,0),799-height);
+        //System.out.println("" + width + " " + height + " " + x + " " + y);
     }
 
-    public int getX() {
-        return x;
+    public void fire() {
+        missiles.add(new Missile(x + width / 2, y));
     }
 
-    public int getY() {
-        return y;
-    }
-
-    public int getWidth() {
-        return w;
-    }
-
-    public int getHeight() {
-        return h;
-    }
-
-    public Image getImage() {
-        return image;
+    public List<Missile> getMissiles(){
+        return missiles;
     }
 
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
-        if      (key == KeyEvent.VK_LEFT)   { dx = -2; }
-        else if (key == KeyEvent.VK_RIGHT)  { dx =  2; }
-        else if (key == KeyEvent.VK_UP)     { dy = -2; }
-        else if (key == KeyEvent.VK_DOWN)   { dy =  2; }
+        if (key == KeyEvent.VK_LEFT)   { dx = -SPEED; }
+        if (key == KeyEvent.VK_RIGHT)  { dx =  SPEED; }
+        if (key == KeyEvent.VK_UP)     { dy = -SPEED; }
+        if (key == KeyEvent.VK_DOWN)   { dy =  SPEED; }
+        if (key == KeyEvent.VK_SPACE)  { fire();  }
     }
 
     public void keyReleased(KeyEvent e) {
         int key = e.getKeyCode();
-        if      (key == KeyEvent.VK_LEFT)   { dx = 0; }
-        else if (key == KeyEvent.VK_RIGHT)  { dx = 0; }
-        else if (key == KeyEvent.VK_UP)     { dy = 0; }
-        else if (key == KeyEvent.VK_DOWN)   { dy = 0; }
+        if (key == KeyEvent.VK_LEFT)   { dx = 0; }
+        if (key == KeyEvent.VK_RIGHT)  { dx = 0; }
+        if (key == KeyEvent.VK_UP)     { dy = 0; }
+        if (key == KeyEvent.VK_DOWN)   { dy = 0; }
     }
 }
 

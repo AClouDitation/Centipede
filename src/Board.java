@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Board extends JPanel
@@ -14,6 +15,7 @@ public class Board extends JPanel
     private final int DELAY = 10;
 
     private Character character;
+    private List<Mushroom> mushrooms;
     private Timer timer;
 
     public Board () {
@@ -26,6 +28,8 @@ public class Board extends JPanel
         setBackground(Color.BLACK);
 
         character = new Character(ICRAFT_X, ICRAFT_Y);
+        mushrooms = new ArrayList<>();
+        mushrooms.add(new Mushroom(100,100));
 
         timer = new Timer(DELAY, this);
         timer.start();
@@ -44,6 +48,11 @@ public class Board extends JPanel
         g2d.drawImage(character.getImage(),
                 character.getX(), character.getY(), this);
 
+        for(Mushroom mushroom: mushrooms){
+            g2d.drawImage(mushroom.getImage(),
+                    mushroom.getX(), mushroom.getY(), this);
+        }
+
         List<Missile> missiles = character.getMissiles();
         for(Missile missile: missiles){
             g2d.drawImage(missile.getImage(),
@@ -52,7 +61,11 @@ public class Board extends JPanel
     }
 
     private void updateCharacter() {
-        character.move();
+        List<Rectangle> bounds = new ArrayList<>();
+        for(Mushroom mushroom: mushrooms){
+            bounds.add(mushroom.getBounds());
+        }
+        character.move(bounds);
     }
 
     private void updateMissiles() {
@@ -64,6 +77,10 @@ public class Board extends JPanel
             else {missiles.remove(i);}
         }
 
+    }
+
+    private void checkCollisions() {
+        Rectangle characterRec = character.getBounds();
     }
 
     @Override

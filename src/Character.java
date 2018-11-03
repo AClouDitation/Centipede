@@ -1,16 +1,15 @@
+import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.Integer.max;
-import static java.lang.Integer.min;
-
-public class Character extends Sprite {
+public class Character extends Sprite implements KeyListener {
 
     private int SPEED = 5;
-    private int dx;
-    private int dy;
     private List<Missile> missiles;
+    private int missileCoolDown = 0;
+    private boolean[] keys = new boolean[120];
 
     public Character(int x, int y) {
         super(x, y);
@@ -25,12 +24,37 @@ public class Character extends Sprite {
         y -= height/2;
     }
 
-    public void move() {
-        if(x + width < 600 && x >= 0) x += dx;
-        if(y + height < 800 && y >= 0) y += dy;
+    public void move(List<Rectangle> bounds) {
+        int dx=0, dy=0;
+        if(keys[KeyEvent.VK_LEFT]) dx -= SPEED;
+        if(keys[KeyEvent.VK_RIGHT])dx += SPEED;
+        if(keys[KeyEvent.VK_UP])   dy -= SPEED;
+        if(keys[KeyEvent.VK_DOWN]) dy += SPEED;
+        if(keys[KeyEvent.VK_SPACE]) {
+            if(missileCoolDown == 0){
+                missileCoolDown = 10;
+                fire();
+            }
+            missileCoolDown -= 1;
+        }
 
-        x = min(max(x,0),599-width);
-        y = min(max(y,0),799-height);
+        if(dx != 0 && x + dx + width < 600 && x + dx >= 0) {
+            boolean canMove = true;
+            for(Rectangle bound: bounds){
+                Rectangle rec = new Rectangle(x+dx, y, width, height);
+                if(rec.intersects(bound)) canMove = false;
+            }
+            if(canMove) x += dx;
+        }
+
+        if(dy != 0 && y + dy + width < 800 && y + dy >= 0) {
+            boolean canMove = true;
+            for(Rectangle bound: bounds){
+                Rectangle rec = new Rectangle(x, y+dy, width, height);
+                if(rec.intersects(bound)) canMove = false;
+            }
+            if(canMove) y += dy;
+        }
         //System.out.println("" + width + " " + height + " " + x + " " + y);
     }
 
@@ -43,20 +67,14 @@ public class Character extends Sprite {
     }
 
     public void keyPressed(KeyEvent e) {
-        int key = e.getKeyCode();
-        if (key == KeyEvent.VK_LEFT)   { dx = -SPEED; }
-        if (key == KeyEvent.VK_RIGHT)  { dx =  SPEED; }
-        if (key == KeyEvent.VK_UP)     { dy = -SPEED; }
-        if (key == KeyEvent.VK_DOWN)   { dy =  SPEED; }
-        if (key == KeyEvent.VK_SPACE)  { fire();  }
+        keys[e.getKeyCode()] = true;
     }
 
     public void keyReleased(KeyEvent e) {
-        int key = e.getKeyCode();
-        if (key == KeyEvent.VK_LEFT)   { dx = 0; }
-        if (key == KeyEvent.VK_RIGHT)  { dx = 0; }
-        if (key == KeyEvent.VK_UP)     { dy = 0; }
-        if (key == KeyEvent.VK_DOWN)   { dy = 0; }
+        keys[e.getKeyCode()] = false;
     }
+
+    public void keyTyped(KeyEvent e) {}
+
 }
 

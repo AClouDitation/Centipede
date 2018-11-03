@@ -18,6 +18,7 @@ public class Board extends JPanel
     }
 
     private void initBoard() {
+        setFocusable(true);
         addKeyListener(new TAdapter());
         System.out.println("KEY LISTENER ADDED");
         setBackground(Color.BLACK);

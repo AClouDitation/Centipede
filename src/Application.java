@@ -8,7 +8,7 @@ public class Application extends JFrame {
     }
 
     private void initUI() {
-        add(new Test());
+        add(new Board());
         setSize(600,800);
         setTitle("Application");
         setLocationRelativeTo(null);

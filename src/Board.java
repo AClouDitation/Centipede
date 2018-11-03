@@ -45,9 +45,6 @@ public class Board extends JPanel
     private void doDrawing(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
 
-        g2d.drawImage(character.getImage(),
-                character.getX(), character.getY(), this);
-
         for(Mushroom mushroom: mushrooms){
             g2d.drawImage(mushroom.getImage(),
                     mushroom.getX(), mushroom.getY(), this);
@@ -58,6 +55,9 @@ public class Board extends JPanel
             g2d.drawImage(missile.getImage(),
                     missile.getX(), missile.getY(), this);
         }
+
+        g2d.drawImage(character.getImage(),
+                character.getX(), character.getY(), this);
     }
 
     private void updateCharacter() {
@@ -73,14 +73,12 @@ public class Board extends JPanel
 
         for (int i = 0;i < missiles.size(); i++) {
             Missile missile = missiles.get(i);
-            if(missile.isVisible()) { missile.move();}
+            if(missile.isVisible()) {
+                missile.move(mushrooms);
+            }
             else {missiles.remove(i);}
         }
 
-    }
-
-    private void checkCollisions() {
-        Rectangle characterRec = character.getBounds();
     }
 
     @Override

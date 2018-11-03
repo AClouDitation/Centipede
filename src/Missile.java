@@ -1,3 +1,6 @@
+import java.awt.*;
+import java.util.List;
+
 public class Missile extends Sprite {
 
     private final int BOARD_WIDTH = 390; //temp
@@ -15,8 +18,26 @@ public class Missile extends Sprite {
         y -= height/2;
     }
 
-    public void move() {
+    public void move(List<Mushroom> mushrooms) {
         y -= MISSILE_SPEED;
-        if (y < 0) visible = false;
+        if (y < 0) {
+            visible = false;
+            return;
+
+        }
+        for(int i = 0;i < mushrooms.size(); i++) {
+            Mushroom mushroom = mushrooms.get(i);
+            Rectangle mushroomBound = mushroom.getBounds();
+            Rectangle missileBound = getBounds();
+
+            if(missileBound.intersects(mushroomBound)) {
+               mushroom.hit();
+               if(!mushroom.isVisible()){
+                    mushrooms.remove(i);
+               }
+               visible = false;
+               break;
+            }
+        }
     }
 }

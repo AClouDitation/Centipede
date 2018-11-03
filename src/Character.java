@@ -39,22 +39,13 @@ public class Character extends Sprite implements KeyListener {
         }
 
         if(dx != 0 && x + dx + width < 600 && x + dx >= 0) {
-            boolean canMove = true;
-            for(Rectangle bound: bounds){
-                Rectangle rec = new Rectangle(x+dx, y, width, height);
-                if(rec.intersects(bound)) canMove = false;
-            }
-            if(canMove) x += dx;
+            x += dx;
         }
 
         if(dy != 0 && y + dy + width < 800 && y + dy >= 0) {
-            boolean canMove = true;
-            for(Rectangle bound: bounds){
-                Rectangle rec = new Rectangle(x, y+dy, width, height);
-                if(rec.intersects(bound)) canMove = false;
-            }
-            if(canMove) y += dy;
+            y += dy;
         }
+
         //System.out.println("" + width + " " + height + " " + x + " " + y);
     }
 

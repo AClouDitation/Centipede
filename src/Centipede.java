@@ -7,7 +7,7 @@ public class Centipede {
 
     private int length;
     private int speed;
-    private int cooldown;
+    private int coolDown;
     private enum Direction {
         UP, DOWN, LEFT, RIGHT
     }
@@ -19,7 +19,7 @@ public class Centipede {
         this.length = length;
         this.speed = speed;
         this.direction = Direction.LEFT;
-        this.cooldown = 0;
+        this.coolDown = 0;
 
         nodes = new ArrayList<>();
         for(int i=0;i < length;i++) {
@@ -44,28 +44,41 @@ public class Centipede {
             isHead = false;
         }
 
-        public void setLocaton(int x, int y){
+        public void setLocation(int x, int y){
             this.x = x;
             this.y = y;
         }
     }
 
-    public void move(){
-        if(cooldown > 0) {
-            cooldown -= speed;
+    public void move(boolean[][] hasMushroom){
+        if(coolDown > 0) {
+            coolDown -= speed;
             return;
         }
-        cooldown = 100;
+        coolDown = 100;
         CentipedeNode head = nodes.get(0);
         CentipedeNode tail = nodes.get(nodes.size()-1);
         int nextX = head.getX();
         int nextY = head.getY();
-        if(direction == Direction.DOWN) nextY += 40;
-        if(direction == Direction.LEFT) nextX -= 40;
-        if(direction == Direction.RIGHT)nextX += 40;
+        System.out.println(""+nextY/40+" "+nextX/40);
+        if(direction == Direction.LEFT){
+            if(nextX/40-1 < 0 ||
+                    hasMushroom[nextY/40][nextX/40-1]) {
+                nextY += 40;
+                direction = Direction.RIGHT;
+            }
+            else nextX -= 40;
+        }
+        else if(direction == Direction.RIGHT){
+            if(nextX/40+1 >= Application.FRAME_WIDTH/40 ||
+                    hasMushroom[nextY/40][nextX/40+1]) {
+                nextY += 40;
+                direction = Direction.LEFT;
+            }
+            else nextX += 40;
+        }
 
-        System.out.println(""+nextX+" "+nextY);
-        tail.setLocaton(nextX, nextY);
+        tail.setLocation(nextX, nextY);
         nodes.add(0,tail);
         nodes.remove(nodes.size()-1);
     }

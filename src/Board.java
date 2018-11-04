@@ -19,6 +19,10 @@ public class Board extends JPanel implements ActionListener{
     private List<Mushroom> mushrooms;
     private Timer timer;
 
+    private boolean hasMushroom[][];
+    private int mushroomMapM;
+    private int mushroomMapN;
+
     public Board () {
         initBoard();
     }
@@ -30,7 +34,7 @@ public class Board extends JPanel implements ActionListener{
 
         character = new Character(ICRAFT_X, ICRAFT_Y);
         mushrooms = new ArrayList<>();
-        centipede = new Centipede(3, 1, Application.FRAME_WIDTH - 360,0);
+        centipede = new Centipede(3, 10, Application.FRAME_WIDTH - 360,0);
         generateMushrooms();
 
         timer = new Timer(DELAY, this);
@@ -38,15 +42,16 @@ public class Board extends JPanel implements ActionListener{
     }
 
     private void generateMushrooms() {
-        int m = Application.FRAME_HEIGHT/40;
-        int n = Application.FRAME_WIDTH/40;
+        mushroomMapM = Application.FRAME_HEIGHT/40;
+        mushroomMapN = Application.FRAME_WIDTH/40;
+        hasMushroom = new boolean[mushroomMapM][mushroomMapN];
+        System.out.println(""+mushroomMapM+" "+mushroomMapN);
 
         Random rand = new Random();
-        boolean hasMushroom[][] = new boolean[m][n];
 
-        for(int i = 1;i < m - 5;i++) {
+        for(int i = 1;i < mushroomMapM-5;i++) {
             if(i%2 == 0){
-                for(int j = n-2;j > 0;j--) {
+                for(int j = mushroomMapN-2;j > 0;j--) {
                     if(hasMushroom[i-1][j+1]) continue;
                     if (rand.nextInt(100) >= 70) {
                         hasMushroom[i][j] = true;
@@ -54,7 +59,7 @@ public class Board extends JPanel implements ActionListener{
                 }
             }
             else{
-                for(int j = 1;j < n-1;j++) {
+                for(int j = 1;j < mushroomMapN-1;j++) {
                     if(hasMushroom[i-1][j-1]) continue;
                     if (rand.nextInt(100) >= 70) {
                         hasMushroom[i][j] = true;
@@ -63,8 +68,8 @@ public class Board extends JPanel implements ActionListener{
             }
         }
 
-        for(int i = 0;i < m;i++){
-            for(int j = 0;j < n;j++){
+        for(int i = 0;i < mushroomMapM;i++){
+            for(int j = 0;j < mushroomMapN;j++){
                 if(hasMushroom[i][j]) mushrooms.add(new Mushroom(j * 40 + 20, i * 40 + 20));
             }
         }
@@ -118,7 +123,7 @@ public class Board extends JPanel implements ActionListener{
     }
 
     private void updateCentipede() {
-        centipede.move();
+        centipede.move(hasMushroom);
     }
 
     @Override

@@ -38,11 +38,11 @@ public class Character extends Sprite implements KeyListener {
             missileCoolDown -= 1;
         }
 
-        if(dx != 0 && x + dx + width < 600 && x + dx >= 0) {
+        if(dx != 0 && x + dx + width < Application.FRAME_WIDTH && x + dx >= 0) {
             x += dx;
         }
 
-        if(dy != 0 && y + dy + width < 800 && y + dy >= 0) {
+        if(dy != 0 && y + dy + height < Application.FRAME_HEIGHT && y + dy >= 0) {
             y += dy;
         }
 

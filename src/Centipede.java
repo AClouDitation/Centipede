@@ -36,7 +36,7 @@ public class Centipede {
             initCentipedeNode();
         }
 
-        public void initCentipedeNode(){
+        public void initCentipedeNode() {
             loadImage("src/resources/robo_small.png");
             getImageDimensions();
 
@@ -44,10 +44,33 @@ public class Centipede {
             isHead = false;
         }
 
-        public void setLocation(int x, int y){
+        public void setLocation(int x, int y) {
             this.x = x;
             this.y = y;
         }
+
+        public void hit() {
+            health--;
+            if(health == 0) {
+                visible = false;
+            }
+            //split the centipede
+        }
+    }
+
+    public boolean checkIfHit(Rectangle bound) {
+        for(int i = 0;i < nodes.size();i++) {
+            CentipedeNode node = nodes.get(i);
+            Rectangle nodeRect = node.getBounds();
+            if(nodeRect.intersects(bound)){
+                node.hit();
+                if(!node.isVisible()){
+                    nodes.remove(i);
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     public void move(boolean[][] hasMushroom){

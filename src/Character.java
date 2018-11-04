@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
@@ -24,7 +23,7 @@ public class Character extends Sprite implements KeyListener {
         y -= height/2;
     }
 
-    public void move(List<Rectangle> bounds) {
+    public void move() {
         int dx=0, dy=0;
         if(keys[KeyEvent.VK_LEFT]) dx -= SPEED;
         if(keys[KeyEvent.VK_RIGHT])dx += SPEED;

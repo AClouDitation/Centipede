@@ -15,7 +15,7 @@ public class Board extends JPanel implements ActionListener{
     private final int DELAY = 10;
 
     private Character character;
-    private Centipede centipede;
+    private List<Centipede> centipedes;
     private List<Mushroom> mushrooms;
     private Timer timer;
 
@@ -34,7 +34,8 @@ public class Board extends JPanel implements ActionListener{
 
         character = new Character(ICRAFT_X, ICRAFT_Y);
         mushrooms = new ArrayList<>();
-        centipede = new Centipede(3, 10, Application.FRAME_WIDTH - 360,0);
+        centipedes = new ArrayList<>();
+        centipedes.add(new Centipede(3, 10, Application.FRAME_WIDTH - 360,0));
         generateMushrooms();
 
         timer = new Timer(DELAY, this);
@@ -96,7 +97,10 @@ public class Board extends JPanel implements ActionListener{
                     missile.getX(), missile.getY(), this);
         }
 
-        centipede.draw(g2d, this);
+        for(Centipede centipede:centipedes) {
+            centipede.draw(g2d, this);
+        }
+
         g2d.drawImage(character.getImage(),
                 character.getX(), character.getY(), this);
     }
@@ -106,7 +110,7 @@ public class Board extends JPanel implements ActionListener{
         for(Mushroom mushroom: mushrooms){
             bounds.add(mushroom.getBounds());
         }
-        character.move(bounds);
+        character.move();
     }
 
     private void updateMissiles() {
@@ -115,22 +119,24 @@ public class Board extends JPanel implements ActionListener{
         for (int i = 0;i < missiles.size(); i++) {
             Missile missile = missiles.get(i);
             if(missile.isVisible()) {
-                missile.move(mushrooms);
+                missile.move(mushrooms, centipedes);
             }
             else {missiles.remove(i);}
         }
 
     }
 
-    private void updateCentipede() {
-        centipede.move(hasMushroom);
+    private void updateCentipedes() {
+        for(Centipede centipede: centipedes){
+            centipede.move(hasMushroom);
+        }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         updateCharacter();
         updateMissiles();
-        updateCentipede();
+        updateCentipedes();
         repaint();
     }
 

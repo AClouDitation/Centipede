@@ -15,6 +15,7 @@ public class Board extends JPanel implements ActionListener{
     private final int DELAY = 10;
 
     private Character character;
+    private Centipede centipede;
     private List<Mushroom> mushrooms;
     private Timer timer;
 
@@ -29,7 +30,7 @@ public class Board extends JPanel implements ActionListener{
 
         character = new Character(ICRAFT_X, ICRAFT_Y);
         mushrooms = new ArrayList<>();
-        //mushrooms.add(new Mushroom(100,100));
+        centipede = new Centipede(3, 1, Application.FRAME_WIDTH - 360,0);
         generateMushrooms();
 
         timer = new Timer(DELAY, this);
@@ -43,7 +44,7 @@ public class Board extends JPanel implements ActionListener{
         Random rand = new Random();
         boolean hasMushroom[][] = new boolean[m][n];
 
-        for(int i = 1;i < m - 10;i++) {
+        for(int i = 1;i < m - 5;i++) {
             if(i%2 == 0){
                 for(int j = n-2;j > 0;j--) {
                     if(hasMushroom[i-1][j+1]) continue;
@@ -90,6 +91,7 @@ public class Board extends JPanel implements ActionListener{
                     missile.getX(), missile.getY(), this);
         }
 
+        centipede.draw(g2d, this);
         g2d.drawImage(character.getImage(),
                 character.getX(), character.getY(), this);
     }
@@ -115,10 +117,15 @@ public class Board extends JPanel implements ActionListener{
 
     }
 
+    private void updateCentipede() {
+        centipede.move();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         updateCharacter();
         updateMissiles();
+        updateCentipede();
         repaint();
     }
 

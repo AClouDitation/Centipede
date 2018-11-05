@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Centipede {
@@ -12,7 +11,8 @@ public class Centipede {
         UP, DOWN, LEFT, RIGHT
     }
     private Direction direction;
-    private List<CentipedeNode> nodes;
+    //private LinkedList<CentipedeNode> nodes;
+    private CentipedeNode head;
 
     public Centipede(int length, int speed, int x, int y) {
 
@@ -21,16 +21,26 @@ public class Centipede {
         this.direction = Direction.LEFT;
         this.coolDown = 0;
 
-        nodes = new ArrayList<>();
-        for(int i=0;i < length;i++) {
-           nodes.add(new CentipedeNode(x+40*i,y));
+        head = new CentipedeNode(x,y);
+        CentipedeNode now = head;
+        for(int i=1;i < length;i++) {
+           now.next = new CentipedeNode(x+40*i,y);
+           now = now.next;
         }
     }
 
+    public Centipede(CentipedeNode head, int speed, Direction direction) {
+        this.head = head;
+        this.speed = speed;
+        this.direction = direction;
+    }
+
+
     private class CentipedeNode extends Sprite {
 
-        int health;
-        boolean isHead;
+        private int health;
+        private boolean isHead;
+        public CentipedeNode next;
         public CentipedeNode(int x, int y) {
             super(x, y);
             initCentipedeNode();
@@ -51,36 +61,48 @@ public class Centipede {
 
         public void hit() {
             health--;
+            if(health == 1) loadImage("src/resources/robo_red_small.png");
             if(health == 0) {
                 visible = false;
             }
-            //split the centipede
         }
     }
 
-    public boolean checkIfHit(Rectangle bound) {
-        for(int i = 0;i < nodes.size();i++) {
-            CentipedeNode node = nodes.get(i);
-            Rectangle nodeRect = node.getBounds();
-            if(nodeRect.intersects(bound)){
-                node.hit();
-                if(!node.isVisible()){
-                    nodes.remove(i);
+    public boolean checkIfHit(Rectangle bound, List<Centipede> centipedes) {
+        CentipedeNode prev = null;
+        CentipedeNode now = head;
+        while (now != null) {
+            Rectangle nodeRect = now.getBounds();
+            if (nodeRect.intersects(bound)) {
+                now.hit();
+                if (!now.isVisible()) {
+                    //split the centipede
+                    if (prev == null && now.next == null) centipedes.remove(this);
+                    if (now.next != null) centipedes.add(new Centipede(now.next,speed,direction));
+                    if (prev != null) prev.next = null;
                 }
                 return true;
             }
+            prev = now;
+            now = now.next;
         }
         return false;
     }
 
-    public void move(boolean[][] hasMushroom){
+    public void move(List<Mushroom> mushrooms, int mushroomMapM, int mushroomMapN){
+
+        boolean[][] hasMushroom = new boolean[mushroomMapM][mushroomMapN];
+
+        for(Mushroom mushroom: mushrooms) {
+            hasMushroom[mushroom.getY()/40][mushroom.getX()/40] = true;
+        }
+
         if(coolDown > 0) {
             coolDown -= speed;
             return;
         }
         coolDown = 100;
-        CentipedeNode head = nodes.get(0);
-        CentipedeNode tail = nodes.get(nodes.size()-1);
+
         int nextX = head.getX();
         int nextY = head.getY();
         System.out.println(""+nextY/40+" "+nextX/40);
@@ -101,14 +123,25 @@ public class Centipede {
             else nextX += 40;
         }
 
-        tail.setLocation(nextX, nextY);
-        nodes.add(0,tail);
-        nodes.remove(nodes.size()-1);
+        CentipedeNode now = head.next;
+        int lastX = head.getX();
+        int lastY = head.getY();
+        while(now != null){
+            int tempX = now.getX();
+            int tempY = now.getY();
+            now.setLocation(lastX,lastY);
+            lastX = tempX;
+            lastY = tempY;
+            now = now.next;
+        }
+        head.setLocation(nextX,nextY);
     }
 
     public void draw(Graphics2D g, JPanel observer) {
-        for(CentipedeNode node: nodes) {
-            g.drawImage(node.getImage(),node.getX(), node.getY(), observer);
+        CentipedeNode now = head;
+        while(now!=null) {
+            g.drawImage(now.getImage(), now.getX(), now.getY(), observer);
+            now=now.next;
         }
     }
 }

@@ -30,13 +30,13 @@ public class Character extends Sprite implements KeyListener {
         if(keys[KeyEvent.VK_UP])   dy -= SPEED;
         if(keys[KeyEvent.VK_DOWN]) dy += SPEED;
         if(keys[KeyEvent.VK_SPACE]) {
-            if(missileCoolDown == 0){
-                missileCoolDown = 10;
+            if(missileCoolDown <= 0){
+                missileCoolDown = 15;
                 fire();
             }
-            missileCoolDown -= 1;
         }
 
+        if(missileCoolDown > 0) missileCoolDown -= 1;
         if(dx != 0 && x + dx + width < Application.FRAME_WIDTH && x + dx >= 0) {
             x += dx;
         }

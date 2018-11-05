@@ -42,7 +42,7 @@ public class Missile extends Sprite {
 
 
         for(Centipede centipede:centipedes){
-            if(centipede.checkIfHit(getBounds())){
+            if(centipede.checkIfHit(getBounds(), centipedes)){
                 visible = false;
                 break;
             }

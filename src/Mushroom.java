@@ -10,8 +10,6 @@ public class Mushroom extends Sprite {
     private void initMushroom() {
         loadImage("src/resources/mushroom_1.png");
         getImageDimensions();
-        x -= width / 2;
-        y -= height / 2;
     }
 
     public void hit() {

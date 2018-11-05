@@ -19,7 +19,6 @@ public class Board extends JPanel implements ActionListener{
     private List<Mushroom> mushrooms;
     private Timer timer;
 
-    private boolean hasMushroom[][];
     private int mushroomMapM;
     private int mushroomMapN;
 
@@ -35,7 +34,7 @@ public class Board extends JPanel implements ActionListener{
         character = new Character(ICRAFT_X, ICRAFT_Y);
         mushrooms = new ArrayList<>();
         centipedes = new ArrayList<>();
-        centipedes.add(new Centipede(3, 10, Application.FRAME_WIDTH - 360,0));
+        centipedes.add(new Centipede(10, 10, Application.FRAME_WIDTH - 360,0));
         generateMushrooms();
 
         timer = new Timer(DELAY, this);
@@ -43,6 +42,7 @@ public class Board extends JPanel implements ActionListener{
     }
 
     private void generateMushrooms() {
+        boolean hasMushroom[][];
         mushroomMapM = Application.FRAME_HEIGHT/40;
         mushroomMapN = Application.FRAME_WIDTH/40;
         hasMushroom = new boolean[mushroomMapM][mushroomMapN];
@@ -71,7 +71,7 @@ public class Board extends JPanel implements ActionListener{
 
         for(int i = 0;i < mushroomMapM;i++){
             for(int j = 0;j < mushroomMapN;j++){
-                if(hasMushroom[i][j]) mushrooms.add(new Mushroom(j * 40 + 20, i * 40 + 20));
+                if(hasMushroom[i][j]) mushrooms.add(new Mushroom(j*40,i*40));
             }
         }
     }
@@ -128,7 +128,7 @@ public class Board extends JPanel implements ActionListener{
 
     private void updateCentipedes() {
         for(Centipede centipede: centipedes){
-            centipede.move(hasMushroom);
+            centipede.move(mushrooms,mushroomMapM,mushroomMapN);
         }
     }
 

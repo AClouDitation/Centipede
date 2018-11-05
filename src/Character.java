@@ -23,7 +23,7 @@ public class Character extends Sprite implements KeyListener {
         y -= height/2;
     }
 
-    public void move() {
+    public void move(List<Centipede> centipedes) {
         int dx=0, dy=0;
         if(keys[KeyEvent.VK_LEFT]) dx -= SPEED;
         if(keys[KeyEvent.VK_RIGHT])dx += SPEED;
@@ -45,6 +45,11 @@ public class Character extends Sprite implements KeyListener {
             y += dy;
         }
 
+        for(Centipede centipede:centipedes){
+            if(centipede.intersect(getBounds())){
+                visible = false;
+            }
+        }
         //System.out.println("" + width + " " + height + " " + x + " " + y);
     }
 

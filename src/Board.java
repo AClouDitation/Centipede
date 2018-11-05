@@ -51,20 +51,10 @@ public class Board extends JPanel implements ActionListener{
         Random rand = new Random();
 
         for(int i = 1;i < mushroomMapM-5;i++) {
-            if(i%2 == 0){
-                for(int j = mushroomMapN-2;j > 0;j--) {
-                    if(hasMushroom[i-1][j+1]) continue;
-                    if (rand.nextInt(100) >= 70) {
-                        hasMushroom[i][j] = true;
-                    }
-                }
-            }
-            else{
-                for(int j = 1;j < mushroomMapN-1;j++) {
-                    if(hasMushroom[i-1][j-1]) continue;
-                    if (rand.nextInt(100) >= 70) {
-                        hasMushroom[i][j] = true;
-                    }
+            for(int j = 1;j < mushroomMapN-1;j++) {
+                if(hasMushroom[i-1][j-1] || hasMushroom[i-1][j+1]) continue;
+                if (rand.nextInt(100) >= 70) {
+                    hasMushroom[i][j] = true;
                 }
             }
         }
@@ -106,11 +96,11 @@ public class Board extends JPanel implements ActionListener{
     }
 
     private void updateCharacter() {
-        List<Rectangle> bounds = new ArrayList<>();
-        for(Mushroom mushroom: mushrooms){
-            bounds.add(mushroom.getBounds());
+        character.move(centipedes);
+        if(!character.isVisible()){
+            System.out.println("you died");
+            character = null; // let it crash for now
         }
-        character.move();
     }
 
     private void updateMissiles() {

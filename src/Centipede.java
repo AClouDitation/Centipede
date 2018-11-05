@@ -115,6 +115,7 @@ public class Centipede {
             if(nextX/40-1 < 0 ||
                     hasMushroom[nextY/40][nextX/40-1]) {
                 nextY += 40;
+                nextY %= Application.FRAME_HEIGHT;
                 direction = Direction.RIGHT;
             }
             else nextX -= 40;
@@ -123,6 +124,7 @@ public class Centipede {
             if(nextX/40+1 >= Application.FRAME_WIDTH/40 ||
                     hasMushroom[nextY/40][nextX/40+1]) {
                 nextY += 40;
+                nextY %= Application.FRAME_HEIGHT;
                 direction = Direction.LEFT;
             }
             else nextX += 40;
@@ -148,5 +150,14 @@ public class Centipede {
             g.drawImage(now.getImage(), now.getX(), now.getY(), observer);
             now=now.next;
         }
+    }
+
+    public boolean intersect(Rectangle rect) {
+        CentipedeNode now = head;
+        while(now != null) {
+            if(now.getBounds().intersects(rect)) return true;
+            now = now.next;
+        }
+        return false;
     }
 }

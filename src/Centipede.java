@@ -8,7 +8,7 @@ public class Centipede {
     private int speed;
     private int coolDown;
     private enum Direction {
-        UP, DOWN, LEFT, RIGHT
+        LEFT, RIGHT
     }
     private Direction direction;
     //private LinkedList<CentipedeNode> nodes;
@@ -77,9 +77,14 @@ public class Centipede {
                 now.hit();
                 if (!now.isVisible()) {
                     //split the centipede
-                    if (prev == null && now.next == null) centipedes.remove(this);
-                    if (now.next != null) centipedes.add(new Centipede(now.next,speed,direction));
-                    if (prev != null) prev.next = null;
+                    if (prev == null && now.next == null) centipedes.remove(this);  // single node centipede
+                    else if (prev == null) head = head.next;                            // attacking head
+                    else if (now.next == null) prev.next = null;                        // attacking tail
+                    else {                                                              // split centipede
+                        Direction next_direction = direction == Direction.RIGHT ? Direction.LEFT : Direction.RIGHT;
+                        centipedes.add(new Centipede(now.next, speed, next_direction));
+                        prev.next = null;
+                    }
                 }
                 return true;
             }

@@ -11,15 +11,15 @@ public class Application extends JFrame {
 
     private void initUI() {
 
-        Board board = new Board();
         TopBar topBar = new TopBar();
+        Board board = new Board(topBar);
 
         JSplitPane sl = new JSplitPane(SwingConstants.HORIZONTAL, topBar, board);
         sl.setDividerLocation(30);
         sl.setEnabled(false);
         sl.setDividerSize(0);
         add(sl);
-        setSize(FRAME_WIDTH,FRAME_HEIGHT + Board.getMeshLength() + 40);
+        setSize(FRAME_WIDTH,FRAME_HEIGHT + Board.getMeshLength() + 30);
         setTitle("Centipede");
         setLocationRelativeTo(null);
         setResizable(false);

@@ -18,13 +18,14 @@ public class Missile extends Sprite {
         y -= height/2;
     }
 
-    public void move(List<Mushroom> mushrooms, List<Centipede> centipedes) {
+    public int move(List<Mushroom> mushrooms, List<Centipede> centipedes) {
+
         y -= MISSILE_SPEED;
         if (y < 0) {
             visible = false;
-            return;
-
+            return 0;
         }
+
         for(int i = 0;i < mushrooms.size(); i++) {
             Mushroom mushroom = mushrooms.get(i);
             Rectangle mushroomBound = mushroom.getBounds();
@@ -32,20 +33,23 @@ public class Missile extends Sprite {
 
             if(missileBound.intersects(mushroomBound)) {
                mushroom.hit();
-               if(!mushroom.isVisible()){
-                    mushrooms.remove(i);
-               }
                visible = false;
-               break;
+               if(!mushroom.isVisible()) {
+                   mushrooms.remove(i);
+                   return 5;
+               }
+               return 1;
             }
         }
-
 
         for(Centipede centipede:centipedes){
-            if(centipede.checkIfHit(getBounds(), centipedes)){
+            int scoreGained = centipede.checkIfHit(getBounds(), centipedes);
+            if(scoreGained > 0) {
                 visible = false;
-                break;
             }
+            return scoreGained;
         }
+
+        return 0;
     }
 }

@@ -20,12 +20,14 @@ public class Board extends JPanel implements ActionListener{
     private Character character;
     private List<Centipede> centipedes;
     private List<Mushroom> mushrooms;
+    private TopBar topBar;
     private Timer timer;
 
     private int mushroomMapM;
     private int mushroomMapN;
 
-    public Board () {
+    public Board (TopBar topBar) {
+        this.topBar = topBar;
         initBoard();
     }
 
@@ -55,7 +57,7 @@ public class Board extends JPanel implements ActionListener{
 
         Random rand = new Random();
 
-        for(int i = 1;i < mushroomMapM-5;i++) {
+        for(int i = 1;i < mushroomMapM-8;i++) {
             for(int j = 1;j < mushroomMapN-1;j++) {
                 if(hasMushroom[i-1][j-1] || hasMushroom[i-1][j+1]) continue;
                 if (rand.nextInt(100) >= 70) {
@@ -113,10 +115,9 @@ public class Board extends JPanel implements ActionListener{
 
         for (int i = 0;i < missiles.size(); i++) {
             Missile missile = missiles.get(i);
-            if(missile.isVisible()) {
-                missile.move(mushrooms, centipedes);
-            }
-            else {missiles.remove(i);}
+            int scoreGained = missile.move(mushrooms, centipedes);
+            topBar.addScore(scoreGained);
+            if(!missile.isVisible()) missiles.remove(i);
         }
 
     }

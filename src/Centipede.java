@@ -8,10 +8,9 @@ public class Centipede {
     private int speed;
     private int coolDown;
     private enum Direction {
-        LEFT, RIGHT
+        UP, DOWN, LEFT, RIGHT
     }
     private Direction direction;
-    //private LinkedList<CentipedeNode> nodes;
     private CentipedeNode head;
 
     public Centipede(int length, int speed, int x, int y) {
@@ -22,15 +21,17 @@ public class Centipede {
         this.coolDown = 0;
 
         head = new CentipedeNode(x,y);
+        head.setHead();
         CentipedeNode now = head;
         for(int i=1;i < length;i++) {
-           now.next = new CentipedeNode(x+40*i,y);
+           now.next = new CentipedeNode(x+30*i,y);
            now = now.next;
         }
     }
 
     public Centipede(CentipedeNode head, int speed, Direction direction) {
         this.head = head;
+        this.head.setHead();
         this.speed = speed;
         this.direction = direction;
     }
@@ -40,6 +41,7 @@ public class Centipede {
 
         private int health;
         private boolean isHead;
+        private Direction direction;
         public CentipedeNode next;
         public CentipedeNode(int x, int y) {
             super(x, y);
@@ -47,11 +49,11 @@ public class Centipede {
         }
 
         public void initCentipedeNode() {
-            loadImage("src/resources/robo_small.png");
+            loadImage("src/resources/centipede_temp.png");
             getImageDimensions();
-
             health = 2;
             isHead = false;
+            setDirection(Direction.LEFT);
         }
 
         public void setLocation(int x, int y) {
@@ -59,13 +61,26 @@ public class Centipede {
             this.y = y;
         }
 
+        public Direction getDirection() {return direction;}
+
+        public void setDirection(Direction direction) {
+            this.direction = direction;
+            if (isHead) {
+                if (this.direction == Direction.UP) loadImage("src/resources/centipede_head_up.png");
+                if (this.direction == Direction.DOWN) loadImage("src/resources/centipede_head_down.png");
+                if (this.direction == Direction.LEFT) loadImage("src/resources/centipede_head_left.png");
+                if (this.direction == Direction.RIGHT) loadImage("src/resources/centipede_head_right.png");
+            }
+        }
+
         public void hit() {
             health--;
-            if(health == 1) loadImage("src/resources/robo_red_small.png");
             if(health == 0) {
                 visible = false;
             }
         }
+
+        public void setHead() {isHead = true;}
     }
 
     public boolean checkIfHit(Rectangle bound, List<Centipede> centipedes) {
@@ -78,9 +93,12 @@ public class Centipede {
                 if (!now.isVisible()) {
                     //split the centipede
                     if (prev == null && now.next == null) centipedes.remove(this);  // single node centipede
-                    else if (prev == null) head = head.next;                            // attacking head
-                    else if (now.next == null) prev.next = null;                        // attacking tail
-                    else {                                                              // split centipede
+                    else if (prev == null) {                                           // attacking head
+                        head = head.next;
+                        head.setHead();
+                    }
+                    else if (now.next == null) prev.next = null;                       // attacking tail
+                    else {                                                             // attacking middle, split centipede
                         Direction next_direction = direction == Direction.RIGHT ? Direction.LEFT : Direction.RIGHT;
                         centipedes.add(new Centipede(now.next, speed, next_direction));
                         prev.next = null;
@@ -99,7 +117,7 @@ public class Centipede {
         boolean[][] hasMushroom = new boolean[mushroomMapM][mushroomMapN];
 
         for(Mushroom mushroom: mushrooms) {
-            hasMushroom[mushroom.getY()/40][mushroom.getX()/40] = true;
+            hasMushroom[mushroom.getY()/Board.getMeshLength()][mushroom.getX()/Board.getMeshLength()] = true;
         }
 
         if(coolDown > 0) {
@@ -110,38 +128,42 @@ public class Centipede {
 
         int nextX = head.getX();
         int nextY = head.getY();
-        System.out.println(""+nextY/40+" "+nextX/40);
         if(direction == Direction.LEFT){
-            if(nextX/40-1 < 0 ||
-                    hasMushroom[nextY/40][nextX/40-1]) {
-                nextY += 40;
+            if(nextX/Board.getMeshLength()-1 < 0 ||
+                    hasMushroom[nextY/Board.getMeshLength()][nextX/Board.getMeshLength()-1]) {
+                nextY += Board.getMeshLength();
                 nextY %= Application.FRAME_HEIGHT;
                 direction = Direction.RIGHT;
             }
-            else nextX -= 40;
+            else nextX -= Board.getMeshLength();
         }
         else if(direction == Direction.RIGHT){
-            if(nextX/40+1 >= Application.FRAME_WIDTH/40 ||
-                    hasMushroom[nextY/40][nextX/40+1]) {
-                nextY += 40;
+            if(nextX/Board.getMeshLength()+1 >= Application.FRAME_WIDTH/Board.getMeshLength() ||
+                    hasMushroom[nextY/Board.getMeshLength()][nextX/Board.getMeshLength()+1]) {
+                nextY += Board.getMeshLength();
                 nextY %= Application.FRAME_HEIGHT;
                 direction = Direction.LEFT;
             }
-            else nextX += 40;
+            else nextX += Board.getMeshLength();
         }
 
         CentipedeNode now = head.next;
         int lastX = head.getX();
         int lastY = head.getY();
+        Direction lastDir = head.getDirection();
         while(now != null){
             int tempX = now.getX();
             int tempY = now.getY();
+            Direction tempDir = now.getDirection();
             now.setLocation(lastX,lastY);
+            now.setDirection(lastDir);
             lastX = tempX;
             lastY = tempY;
+            lastDir = tempDir;
             now = now.next;
         }
         head.setLocation(nextX,nextY);
+        head.setDirection(direction);
     }
 
     public void draw(Graphics2D g, JPanel observer) {

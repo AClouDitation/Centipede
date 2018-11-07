@@ -10,9 +10,17 @@ public class Application extends JFrame {
     }
 
     private void initUI() {
-        add(new Board());
-        setSize(FRAME_WIDTH,FRAME_HEIGHT + 30);
-        setTitle("Application");
+
+        Board board = new Board();
+        TopBar topBar = new TopBar();
+
+        JSplitPane sl = new JSplitPane(SwingConstants.HORIZONTAL, topBar, board);
+        sl.setDividerLocation(30);
+        sl.setEnabled(false);
+        sl.setDividerSize(0);
+        add(sl);
+        setSize(FRAME_WIDTH,FRAME_HEIGHT + Board.getMeshLength() + 40);
+        setTitle("Centipede");
         setLocationRelativeTo(null);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

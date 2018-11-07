@@ -10,6 +10,9 @@ import java.util.Random;
 
 public class Board extends JPanel implements ActionListener{
 
+    private static final int MESH_LENGTH = 30;
+    public static int getMeshLength() { return MESH_LENGTH; }
+
     private final int ICRAFT_X = 480;
     private final int ICRAFT_Y = 680;
     private final int DELAY = 10;
@@ -27,6 +30,7 @@ public class Board extends JPanel implements ActionListener{
     }
 
     private void initBoard() {
+
         setFocusable(true);
         addKeyListener(new TAdapter());
         setBackground(Color.BLACK);
@@ -37,14 +41,15 @@ public class Board extends JPanel implements ActionListener{
         centipedes.add(new Centipede(10, 10, Application.FRAME_WIDTH - 360,0));
         generateMushrooms();
 
+
         timer = new Timer(DELAY, this);
         timer.start();
     }
 
     private void generateMushrooms() {
         boolean hasMushroom[][];
-        mushroomMapM = Application.FRAME_HEIGHT/40;
-        mushroomMapN = Application.FRAME_WIDTH/40;
+        mushroomMapM = Application.FRAME_HEIGHT/MESH_LENGTH;
+        mushroomMapN = Application.FRAME_WIDTH/MESH_LENGTH;
         hasMushroom = new boolean[mushroomMapM][mushroomMapN];
         System.out.println(""+mushroomMapM+" "+mushroomMapN);
 
@@ -61,7 +66,7 @@ public class Board extends JPanel implements ActionListener{
 
         for(int i = 0;i < mushroomMapM;i++){
             for(int j = 0;j < mushroomMapN;j++){
-                if(hasMushroom[i][j]) mushrooms.add(new Mushroom(j*40,i*40));
+                if(hasMushroom[i][j]) mushrooms.add(new Mushroom(j*MESH_LENGTH,i*MESH_LENGTH));
             }
         }
     }
@@ -99,7 +104,7 @@ public class Board extends JPanel implements ActionListener{
         character.move(centipedes);
         if(!character.isVisible()){
             System.out.println("you died");
-            character = null; // let it crash for now
+            timer.stop(); // for now
         }
     }
 

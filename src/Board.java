@@ -40,7 +40,7 @@ public class Board extends JPanel implements ActionListener{
         character = new Character(ICRAFT_X, ICRAFT_Y);
         mushrooms = new ArrayList<>();
         centipedes = new ArrayList<>();
-        centipedes.add(new Centipede(10, 10, Application.FRAME_WIDTH - 360,0));
+        centipedes.add(new Centipede(10, 100, Application.FRAME_WIDTH - 360,0));
         generateMushrooms();
 
 

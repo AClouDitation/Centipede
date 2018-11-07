@@ -54,7 +54,7 @@ public class Centipede {
         private Direction direction;
         private Direction nextDirection;
 
-        private int dspeed = 5;
+        private int dspeed = 10;
         private int downcount;
         private LinkedList<Direction> lastDirections;
 
@@ -110,7 +110,7 @@ public class Centipede {
             setLocation(nextX,nextY);
 
             Direction nextDir = Direction.LEFT;
-            if(lastDirections.size() >= 6) nextDir = lastDirections.pop();
+            if(lastDirections.size() >= Board.getMeshLength()/dspeed) nextDir = lastDirections.pop();
             if(next != null) next.move(nextDir);
             lastDirections.add(dir);
         }
@@ -128,7 +128,7 @@ public class Centipede {
 
                     nextDirection = direction == Direction.LEFT?Direction.RIGHT:Direction.LEFT;
                     direction = Direction.DOWN;
-                    downcount = 5;
+                    downcount = Board.getMeshLength()/dspeed-1;
                 }
                 move(direction);
             }
@@ -181,7 +181,7 @@ public class Centipede {
             coolDown -= speed;
             return;
         }
-        coolDown = 10;
+        coolDown = 100;
 
 
         boolean[][] hasMushroom = new boolean[mushroomMapM][mushroomMapN];

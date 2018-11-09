@@ -46,4 +46,6 @@ public class Sprite {
     public Rectangle getBounds() {
         return new Rectangle(x, y, width, height);
     }
+
+    public void setLocation(int x, int y) { this.x = x; this.y = y; }
 }

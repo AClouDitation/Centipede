@@ -39,13 +39,41 @@ public class Board extends JPanel implements ActionListener{
 
         character = new Character(ICRAFT_X, ICRAFT_Y);
         mushrooms = new ArrayList<>();
-        centipedes = new ArrayList<>();
-        centipedes.add(new Centipede(10, 100, Application.FRAME_WIDTH - 360,0));
         generateMushrooms();
 
+        reset();
 
         timer = new Timer(DELAY, this);
         timer.start();
+    }
+
+    private void reset() {
+
+        character.setVisible(true);
+        character.deleteMissiles();
+
+        while(centipedes != null && !centipedes.isEmpty()) {
+            Centipede centipedeNow = centipedes.get(centipedes.size()-1);
+            while(centipedeNow.deleteNodes()) {
+                update(getGraphics());
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            centipedes.remove(centipedeNow);
+        }
+
+        for(Mushroom mushroom: mushrooms) {
+            if(mushroom.restore()) update(getGraphics());
+        }
+
+        //restart
+        centipedes = new ArrayList<>();
+        centipedes.add(new Centipede(10, 50, Application.FRAME_WIDTH - 30,0));
+
+        character.setLocation(ICRAFT_X,ICRAFT_Y);
     }
 
     private void generateMushrooms() {
@@ -104,10 +132,7 @@ public class Board extends JPanel implements ActionListener{
 
     private void updateCharacter() {
         character.move(centipedes);
-        if(!character.isVisible()){
-            System.out.println("you died");
-            timer.stop(); // for now
-        }
+
     }
 
     private void updateMissiles() {
@@ -126,6 +151,10 @@ public class Board extends JPanel implements ActionListener{
         for(Centipede centipede: centipedes){
             centipede.move(mushrooms,mushroomMapM,mushroomMapN);
         }
+        if(centipedes.size() == 0) {
+            topBar.addScore(600);
+            centipedes.add(new Centipede(10, 100, Application.FRAME_WIDTH-30,0));
+        }
     }
 
     @Override
@@ -133,6 +162,14 @@ public class Board extends JPanel implements ActionListener{
         updateCharacter();
         updateMissiles();
         updateCentipedes();
+        if(!character.isVisible()){
+            System.out.println("you died");
+            topBar.removeLife();
+            timer.stop(); // for now
+
+            reset();
+            timer.start();
+        }
         repaint();
     }
 
@@ -148,4 +185,5 @@ public class Board extends JPanel implements ActionListener{
             character.keyPressed(e);
         }
     }
+
 }

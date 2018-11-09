@@ -209,4 +209,16 @@ public class Centipede {
         }
         return false;
     }
+
+    public boolean deleteNodes(){
+        System.out.println("node removed");
+        if(head == null || head.next == null) {
+            head = null;
+            return false;
+        }
+        CentipedeNode now = head;
+        while(now.next.next != null) now = now.next;
+        now.next = null;
+        return true;
+    }
 }

@@ -1,13 +1,15 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TopBar extends JPanel {
 
     private int score = 0;
-    private int lives = 3;
 
     private JLabel scoreBar;
-    private JPanel liveBar;
+    private JPanel lifeBar;
+    private List<JLabel> lifeLabels;
 
     public TopBar() {
         initTopBar();
@@ -21,25 +23,54 @@ public class TopBar extends JPanel {
         scoreBar.setHorizontalAlignment(SwingConstants.RIGHT);
         // for layout debuggiong purpose
         // scoreBar.setBorder(new LineBorder(Color.RED));
-        liveBar = new JPanel();
-        liveBar.setBackground(Color.BLACK);
+        lifeBar = new JPanel();
+        lifeBar.setBackground(Color.BLACK);
+        lifeBar.setLayout(new FlowLayout(FlowLayout.LEFT));
+        lifeBar.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         //liveBar.setBorder(new LineBorder(Color.BLUE));
 
         //add(scoreBar, Component.RIGHT_ALIGNMENT);
-        add(liveBar,BorderLayout.EAST);
+        add(lifeBar,BorderLayout.EAST);
         add(scoreBar,BorderLayout.WEST);
         addScore(0);
+
+        // add three lives
+        lifeLabels = new ArrayList<>();
+        addLife();
+        addLife();
+        addLife();
+
         repaint();
     }
 
     public void addScore(int scoreGained) {
         score += scoreGained;
         scoreBar.setText(String.format("<html>" +
-                "                   <p color=\"#FFFFFF\">" +
-                "                       <font size=\"6\">%06d</font>" +
-                "                   </p>" +
-                "              </html>",
+                        "                   <p color=\"#FFFFFF\">" +
+                        "                       <font size=\"6\">%06d</font>" +
+                        "                   </p>" +
+                        "              </html>",
                 score));
         repaint();
+    }
+
+    public void addLife() {
+        JLabel newLife = new JLabel();
+        newLife.setIcon(new ImageIcon("src/resources/life.png"));
+        lifeLabels.add(newLife);
+        lifeBar.add(newLife);
+        repaint();
+    }
+
+    public void removeLife() {
+        if(lifeLabels.size() != 0) {
+            lifeBar.remove(lifeLabels.get(lifeLabels.size() - 1));
+            lifeLabels.remove(lifeLabels.size() - 1);
+            repaint();
+        }
+        else{
+            // show you died..
+            // restart?
+        }
     }
 }

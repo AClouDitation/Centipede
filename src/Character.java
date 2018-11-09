@@ -71,5 +71,9 @@ public class Character extends Sprite implements KeyListener {
 
     public void keyTyped(KeyEvent e) {}
 
+    public void deleteMissiles() {
+        missiles = new ArrayList<>();
+    }
+
 }
 

@@ -10,7 +10,8 @@ import java.util.Random;
 
 public class Board extends JPanel implements ActionListener{
 
-    private static final int MESH_LENGTH = 30;
+    public static final int playingAreaHeight = 10;
+    public static final int MESH_LENGTH = 30;
     public static int getMeshLength() { return MESH_LENGTH; }
 
     private final int ICRAFT_X = 480;
@@ -20,7 +21,6 @@ public class Board extends JPanel implements ActionListener{
     private Character character;
     private List<Centipede> centipedes;
     private List<Mushroom> mushrooms;
-    //private List<Spider> spiders;
     private Spider spider;
     private TopBar topBar;
     private Timer timer;
@@ -88,6 +88,10 @@ public class Board extends JPanel implements ActionListener{
                 update(getGraphics());
             }
         }
+        waitMillis(50);
+
+        spider = null;
+        update(getGraphics());
         waitMillis(500);
 
         character.setLocation(ICRAFT_X,ICRAFT_Y);
@@ -107,7 +111,7 @@ public class Board extends JPanel implements ActionListener{
 
         Random rand = new Random();
 
-        for(int i = 1;i < mushroomMapM-8;i++) {
+        for(int i = 1;i < mushroomMapM-playingAreaHeight;i++) {
             for(int j = 1;j < mushroomMapN-1;j++) {
                 if(hasMushroom[i-1][j-1] || hasMushroom[i-1][j+1]) continue;
                 if (rand.nextInt(100) >= 70) {
@@ -203,7 +207,7 @@ public class Board extends JPanel implements ActionListener{
                 spider = new Spider(
                         randNum * (Application.FRAME_WIDTH-30),
                         rand.nextInt(Application.FRAME_HEIGHT),
-                        (randNum == 0 ? 1 : -1) * (rand.nextInt(3) + 3),
+                        (randNum == 0 ? 1 : -1) * (rand.nextInt(5) + 1),
                         rand.nextInt(5) + 1);
             }
         }

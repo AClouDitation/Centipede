@@ -21,13 +21,11 @@ public class Centipede {
         }
     }
 
-    private Direction direction;
     private CentipedeNode head;
 
     public Centipede(int length, int speed, int x, int y) {
 
         this.speed = speed;
-        this.direction = Direction.LEFT;
         this.coolDown = 0;
 
         head = new CentipedeNode(x,y);
@@ -110,12 +108,13 @@ public class Centipede {
             setLocation(nextX,nextY);
 
             Direction nextDir = Direction.LEFT;
-            if(lastDirections.size() >= Board.getMeshLength()/dspeed) nextDir = lastDirections.pop();
+            if(lastDirections.size() >= Board.MESH_LENGTH/dspeed) nextDir = lastDirections.pop();
             if(next != null) next.move(nextDir);
             lastDirections.add(dir);
         }
 
         public void moveHead(boolean[][] hasMushroom) {
+
 
             int nextX = x;
             int nextY = y;
@@ -123,21 +122,27 @@ public class Centipede {
                 nextX += direction.getNumVal() * dspeed;
 
                 if(nextX < 0 || nextX+width >= Application.FRAME_WIDTH ||
-                        hasMushroom[nextY/Board.getMeshLength()]
-                                [nextX/Board.getMeshLength() + (direction == Direction.RIGHT?1:0)]) {
+                        hasMushroom[nextY/Board.MESH_LENGTH]
+                                [nextX/Board.MESH_LENGTH + (direction == Direction.RIGHT?1:0)]) {
 
                     nextDirection = direction == Direction.LEFT?Direction.RIGHT:Direction.LEFT;
                     direction = Direction.DOWN;
-                    downcount = Board.getMeshLength()/dspeed-1;
+                    downcount = Board.MESH_LENGTH/dspeed-1;
+
+                    if(y / Board.MESH_LENGTH >= Application.FRAME_HEIGHT/Board.MESH_LENGTH - Board.playingAreaHeight) {
+                        direction = nextDirection;
+                        nextDirection = direction == Direction.LEFT ? Direction.RIGHT : Direction.LEFT;
+                    }
+
                 }
                 move(direction);
             }
             else {
-                move(direction);
                 downcount--;
-                if(downcount == 0) {
+                move(direction);
+                if (downcount <= 0) {
                     direction = nextDirection;
-                    nextDirection = direction == Direction.LEFT?Direction.RIGHT:Direction.LEFT;
+                    nextDirection = direction == Direction.LEFT ? Direction.RIGHT : Direction.LEFT;
                 }
             }
 
@@ -162,7 +167,7 @@ public class Centipede {
                     }
                     else if (now.next == null) prev.next = null;                       // attacking tail
                     else {                                                             // attacking middle, split centipede
-                        Direction next_direction = direction == Direction.RIGHT ? Direction.LEFT : Direction.RIGHT;
+                        Direction next_direction = now.direction == Direction.RIGHT ? Direction.LEFT : Direction.RIGHT;
                         centipedes.add(new Centipede(now.next, speed, next_direction));
                         prev.next = null;
                     }
@@ -188,7 +193,7 @@ public class Centipede {
         boolean[][] hasMushroom = new boolean[mushroomMapM][mushroomMapN];
 
         for(Mushroom mushroom: mushrooms) {
-            hasMushroom[mushroom.getY()/Board.getMeshLength()][mushroom.getX()/Board.getMeshLength()] = true;
+            hasMushroom[mushroom.getY()/Board.MESH_LENGTH][mushroom.getX()/Board.MESH_LENGTH] = true;
         }
 
         head.moveHead(hasMushroom);
@@ -212,7 +217,7 @@ public class Centipede {
     }
 
     public boolean deleteNodes(){
-        System.out.println("node removed");
+        //System.out.println("node removed");
         if(head == null || head.next == null) {
             head = null;
             return false;

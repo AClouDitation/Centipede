@@ -1,5 +1,9 @@
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +13,7 @@ public class Character extends Sprite implements KeyListener {
     private List<Missile> missiles;
     private int missileCoolDown = 0;
     private boolean[] keys = new boolean[120];
+    Clip shootSound;
 
     public Character(int x, int y) {
         super(x, y);
@@ -18,6 +23,15 @@ public class Character extends Sprite implements KeyListener {
     private void initCharacter(){
         missiles = new ArrayList<>();
         loadImage("src/resources/robo_small.png");
+        try {
+            AudioInputStream audioIn;
+            audioIn = AudioSystem.getAudioInputStream(new File("src/resources/shootSound.wav"));
+            shootSound = AudioSystem.getClip();
+            shootSound.open(audioIn);
+        }
+        catch (Exception ex) {
+            // should not happen
+        }
         getImageDimensions();
         x -= width/2;
         y -= height/2;
@@ -58,6 +72,9 @@ public class Character extends Sprite implements KeyListener {
     }
 
     public void fire() {
+        if (shootSound.isRunning()) shootSound.stop();
+        shootSound.setMicrosecondPosition(0);
+        shootSound.start();
         missiles.add(new Missile(x + width / 2, y));
     }
 

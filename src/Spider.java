@@ -32,7 +32,6 @@ public class Spider extends Sprite {
     }
 
     public int checkIfHit(Rectangle rect) {
-        System.out.println(rect);
         if(rect.intersects(getBounds())) {
             System.out.println("Hit Spider!!!");
             health--;

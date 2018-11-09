@@ -137,6 +137,7 @@ public class Centipede {
                 downcount--;
                 if(downcount == 0) {
                     direction = nextDirection;
+                    nextDirection = direction == Direction.LEFT?Direction.RIGHT:Direction.LEFT;
                 }
             }
 

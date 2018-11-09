@@ -51,7 +51,7 @@ public class TopBar extends JPanel {
                         "                   </p>" +
                         "              </html>",
                 score));
-        repaint();
+        if(scoreGained>0) update(getGraphics());
     }
 
     public void addLife() {

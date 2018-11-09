@@ -26,6 +26,16 @@ public class Board extends JPanel implements ActionListener{
     private int mushroomMapM;
     private int mushroomMapN;
 
+    private int centipedeCoolDown;
+
+    private static void waitMillis(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
     public Board (TopBar topBar) {
         this.topBar = topBar;
         initBoard();
@@ -38,10 +48,15 @@ public class Board extends JPanel implements ActionListener{
         setBackground(Color.BLACK);
 
         character = new Character(ICRAFT_X, ICRAFT_Y);
+        character.setVisible(true);
+        character.setLocation(ICRAFT_X,ICRAFT_Y);
+
         mushrooms = new ArrayList<>();
         generateMushrooms();
 
-        reset();
+        centipedes = new ArrayList<>();
+        centipedes.add(new Centipede(10, 50, Application.FRAME_WIDTH - 30,0));
+        centipedeCoolDown = 300;
 
         timer = new Timer(DELAY, this);
         timer.start();
@@ -56,24 +71,27 @@ public class Board extends JPanel implements ActionListener{
             Centipede centipedeNow = centipedes.get(centipedes.size()-1);
             while(centipedeNow.deleteNodes()) {
                 update(getGraphics());
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                }
+                waitMillis(50);
             }
             centipedes.remove(centipedeNow);
         }
+        update(getGraphics());
+        waitMillis(500);
 
         for(Mushroom mushroom: mushrooms) {
-            if(mushroom.restore()) update(getGraphics());
+            if(mushroom.restore()) {
+                topBar.addScore(10);
+                update(getGraphics());
+            }
         }
-
-        //restart
-        centipedes = new ArrayList<>();
-        centipedes.add(new Centipede(10, 50, Application.FRAME_WIDTH - 30,0));
+        waitMillis(500);
 
         character.setLocation(ICRAFT_X,ICRAFT_Y);
+        update(getGraphics());
+
+        topBar.addScore(-600);
+        timer.start();
+
     }
 
     private void generateMushrooms() {
@@ -148,12 +166,18 @@ public class Board extends JPanel implements ActionListener{
     }
 
     private void updateCentipedes() {
+
         for(Centipede centipede: centipedes){
             centipede.move(mushrooms,mushroomMapM,mushroomMapN);
         }
-        if(centipedes.size() == 0) {
-            topBar.addScore(600);
-            centipedes.add(new Centipede(10, 100, Application.FRAME_WIDTH-30,0));
+
+        if(centipedes.isEmpty()) {
+            if(centipedeCoolDown == 300) topBar.addScore(600);
+            centipedeCoolDown -= 1;
+            if(centipedeCoolDown == 0) {
+                centipedes.add(new Centipede(10, 100, Application.FRAME_WIDTH - 30, 0));
+                centipedeCoolDown = 300;
+            }
         }
     }
 

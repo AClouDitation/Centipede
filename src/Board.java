@@ -20,6 +20,8 @@ public class Board extends JPanel implements ActionListener{
     private Character character;
     private List<Centipede> centipedes;
     private List<Mushroom> mushrooms;
+    //private List<Spider> spiders;
+    private Spider spider;
     private TopBar topBar;
     private Timer timer;
 
@@ -57,6 +59,8 @@ public class Board extends JPanel implements ActionListener{
         centipedes = new ArrayList<>();
         centipedes.add(new Centipede(10, 50, Application.FRAME_WIDTH - 30,0));
         centipedeCoolDown = 300;
+
+        spider = null;
 
         timer = new Timer(DELAY, this);
         timer.start();
@@ -144,6 +148,10 @@ public class Board extends JPanel implements ActionListener{
             centipede.draw(g2d, this);
         }
 
+        if(spider != null) {
+            g2d.drawImage(spider.getImage(),
+                    spider.getX(), spider.getY(), this);
+        }
         g2d.drawImage(character.getImage(),
                 character.getX(), character.getY(), this);
     }
@@ -158,9 +166,10 @@ public class Board extends JPanel implements ActionListener{
 
         for (int i = 0;i < missiles.size(); i++) {
             Missile missile = missiles.get(i);
-            int scoreGained = missile.move(mushrooms, centipedes);
+            int scoreGained = missile.move(mushrooms, centipedes, spider);
             topBar.addScore(scoreGained);
             if(!missile.isVisible()) missiles.remove(i);
+            if(spider != null && !spider.isVisible()) spider = null;
         }
 
     }
@@ -181,13 +190,48 @@ public class Board extends JPanel implements ActionListener{
         }
     }
 
+    public void updateSpider() {
+
+        if(spider == null){
+
+            Random rand = new Random();
+            if(rand.nextInt(1000) < 5) {
+
+                System.out.println("new Spider!!");
+                int randNum = rand.nextInt(2);
+
+                /*
+                spider = new Spider(
+                        randNum * (Application.FRAME_WIDTH-30),
+                        rand.nextInt(Application.FRAME_HEIGHT),
+                        (randNum == 0 ? 1 : -1) * (rand.nextInt(3) + 3),
+                        rand.nextInt(5) + 1);
+                */
+                spider = new Spider(
+                        randNum * (Application.FRAME_WIDTH-30),
+                        rand.nextInt(Application.FRAME_HEIGHT),
+                        (randNum == 0 ? 1 : -1) * 3,
+                        rand.nextInt(5) + 1);
+
+            }
+        }
+        else {
+            spider.move();
+            if(!spider.isVisible()){
+                System.out.println("not visible");
+                spider = null;
+            }
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         updateCharacter();
         updateMissiles();
         updateCentipedes();
+        updateSpider();
         if(!character.isVisible()){
-            System.out.println("you died");
+            //System.out.println("you died");
             topBar.removeLife();
             timer.stop(); // for now
 

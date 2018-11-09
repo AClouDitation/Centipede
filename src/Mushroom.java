@@ -29,7 +29,7 @@ public class Mushroom extends Sprite {
                 Thread.currentThread().interrupt();
             }
 
-            System.out.println("mushroom restored");
+            //System.out.println("mushroom restored");
             life = 3;
             return true;
         }

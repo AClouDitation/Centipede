@@ -18,7 +18,7 @@ public class Missile extends Sprite {
         y -= height/2;
     }
 
-    public int move(List<Mushroom> mushrooms, List<Centipede> centipedes) {
+    public int move(List<Mushroom> mushrooms, List<Centipede> centipedes, Spider spider) {
 
         y -= MISSILE_SPEED;
         if (y < 0) {
@@ -50,6 +50,11 @@ public class Missile extends Sprite {
             return scoreGained;
         }
 
-        return 0;
+        int scoreGained = spider.checkIfHit(getBounds());
+        if(scoreGained > 0) {
+            visible = false;
+        }
+
+        return scoreGained;
     }
 }

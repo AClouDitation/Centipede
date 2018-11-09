@@ -46,15 +46,19 @@ public class Missile extends Sprite {
             int scoreGained = centipede.checkIfHit(getBounds(), centipedes);
             if(scoreGained > 0) {
                 visible = false;
+                return scoreGained;
+            }
+        }
+
+        if(spider != null) {
+            System.out.println("checking if hit spider");
+            int scoreGained = spider.checkIfHit(getBounds());
+            if (scoreGained > 0) {
+                visible = false;
             }
             return scoreGained;
         }
 
-        int scoreGained = spider.checkIfHit(getBounds());
-        if(scoreGained > 0) {
-            visible = false;
-        }
-
-        return scoreGained;
+        return 0;
     }
 }

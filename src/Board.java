@@ -157,7 +157,7 @@ public class Board extends JPanel implements ActionListener{
     }
 
     private void updateCharacter() {
-        character.move(centipedes);
+        character.move(centipedes, spider);
 
     }
 
@@ -200,19 +200,11 @@ public class Board extends JPanel implements ActionListener{
                 System.out.println("new Spider!!");
                 int randNum = rand.nextInt(2);
 
-                /*
                 spider = new Spider(
                         randNum * (Application.FRAME_WIDTH-30),
                         rand.nextInt(Application.FRAME_HEIGHT),
                         (randNum == 0 ? 1 : -1) * (rand.nextInt(3) + 3),
                         rand.nextInt(5) + 1);
-                */
-                spider = new Spider(
-                        randNum * (Application.FRAME_WIDTH-30),
-                        rand.nextInt(Application.FRAME_HEIGHT),
-                        (randNum == 0 ? 1 : -1) * 3,
-                        rand.nextInt(5) + 1);
-
             }
         }
         else {
@@ -231,7 +223,7 @@ public class Board extends JPanel implements ActionListener{
         updateCentipedes();
         updateSpider();
         if(!character.isVisible()){
-            //System.out.println("you died");
+            System.out.println("you died");
             topBar.removeLife();
             timer.stop(); // for now
 

@@ -19,11 +19,11 @@ public class Spider extends Sprite {
     }
 
     public void move() {
-        if(x + dx + width > Application.FRAME_WIDTH || x + dx <= 0) {
+        if(x + dx + width > Main.FRAME_WIDTH || x + dx <= 0) {
             visible = false;
         }
 
-        if(y + dy + width > Application.FRAME_HEIGHT || y + dy <= 0) {
+        if(y + dy + width > Main.FRAME_HEIGHT || y + dy <= 0) {
             dy = -dy;
         }
 

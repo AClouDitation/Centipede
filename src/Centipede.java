@@ -103,7 +103,7 @@ public class Centipede {
             int nextY = y;
             if(dir == Direction.LEFT || dir == Direction.RIGHT) nextX += dir.getNumVal() * dspeed;
             if(dir == Direction.UP   || dir == Direction.DOWN)  nextY += dir.getNumVal() * dspeed;
-            nextY %= Application.FRAME_HEIGHT;
+            nextY %= Main.FRAME_HEIGHT;
             setDirection(dir);
             setLocation(nextX,nextY);
 
@@ -121,7 +121,7 @@ public class Centipede {
             if(direction == Direction.LEFT || direction == Direction.RIGHT) {
                 nextX += direction.getNumVal() * dspeed;
 
-                if(nextX < 0 || nextX+width >= Application.FRAME_WIDTH ||
+                if(nextX < 0 || nextX+width >= Main.FRAME_WIDTH ||
                         hasMushroom[nextY/Board.MESH_LENGTH]
                                 [nextX/Board.MESH_LENGTH + (direction == Direction.RIGHT?1:0)]) {
 
@@ -129,7 +129,7 @@ public class Centipede {
                     direction = Direction.DOWN;
                     downcount = Board.MESH_LENGTH/dspeed-1;
 
-                    if(y / Board.MESH_LENGTH >= Application.FRAME_HEIGHT/Board.MESH_LENGTH - Board.playingAreaHeight) {
+                    if(y / Board.MESH_LENGTH >= Main.FRAME_HEIGHT/Board.MESH_LENGTH - Board.playingAreaHeight) {
                         direction = nextDirection;
                         nextDirection = direction == Direction.LEFT ? Direction.RIGHT : Direction.LEFT;
                     }

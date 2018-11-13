@@ -1,11 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class Application extends JFrame {
+public class Main extends JFrame {
 
     public static int FRAME_WIDTH = 960;
     public static int FRAME_HEIGHT = 720;
-    public Application() {
+    public Main() {
         initUI();
     }
 
@@ -28,7 +28,7 @@ public class Application extends JFrame {
 
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
-            Application ex = new Application();
+            Main ex = new Main();
             ex.setVisible(true);
         });
     }

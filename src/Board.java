@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.font.TextAttribute;
+import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -30,6 +32,8 @@ public class Board extends JPanel implements ActionListener{
 
     private int centipedeCoolDown;
 
+    private boolean isAlive;
+
     private static void waitMillis(int millis) {
         try {
             Thread.sleep(millis);
@@ -48,6 +52,7 @@ public class Board extends JPanel implements ActionListener{
         setFocusable(true);
         addKeyListener(new TAdapter());
         setBackground(Color.BLACK);
+        setLayout(null);
 
         character = new Character(ICRAFT_X, ICRAFT_Y);
         character.setVisible(true);
@@ -57,11 +62,12 @@ public class Board extends JPanel implements ActionListener{
         generateMushrooms();
 
         centipedes = new ArrayList<>();
-        centipedes.add(new Centipede(10, 50, Application.FRAME_WIDTH - 30,0));
+        centipedes.add(new Centipede(10, 50, Main.FRAME_WIDTH - 30,0));
         centipedeCoolDown = 300;
 
         spider = null;
 
+        isAlive = true;
         timer = new Timer(DELAY, this);
         timer.start();
     }
@@ -97,15 +103,16 @@ public class Board extends JPanel implements ActionListener{
         character.setLocation(ICRAFT_X,ICRAFT_Y);
         update(getGraphics());
 
-        topBar.addScore(-600);
+        centipedes.add(new Centipede(10, 100, Main.FRAME_WIDTH - 30, 0));
+        centipedeCoolDown = 300;
         timer.start();
 
     }
 
     private void generateMushrooms() {
         boolean hasMushroom[][];
-        mushroomMapM = Application.FRAME_HEIGHT/MESH_LENGTH;
-        mushroomMapN = Application.FRAME_WIDTH/MESH_LENGTH;
+        mushroomMapM = Main.FRAME_HEIGHT/MESH_LENGTH;
+        mushroomMapN = Main.FRAME_WIDTH/MESH_LENGTH;
         hasMushroom = new boolean[mushroomMapM][mushroomMapN];
         System.out.println(""+mushroomMapM+" "+mushroomMapN);
 
@@ -158,11 +165,16 @@ public class Board extends JPanel implements ActionListener{
         }
         g2d.drawImage(character.getImage(),
                 character.getX(), character.getY(), this);
+        if(!isAlive){
+            AttributedString as = new AttributedString("YOU DIED");
+            as.addAttribute(TextAttribute.FONT, new Font("Serif",Font.PLAIN,96));
+            as.addAttribute(TextAttribute.FOREGROUND, Color.red);
+            g2d.drawString(as.getIterator(), 240, 350);
+        }
     }
 
     private void updateCharacter() {
         character.move(centipedes, spider);
-
     }
 
     private void updateMissiles() {
@@ -188,7 +200,7 @@ public class Board extends JPanel implements ActionListener{
             if(centipedeCoolDown == 300) topBar.addScore(600);
             centipedeCoolDown -= 1;
             if(centipedeCoolDown == 0) {
-                centipedes.add(new Centipede(10, 100, Application.FRAME_WIDTH - 30, 0));
+                centipedes.add(new Centipede(10, 100, Main.FRAME_WIDTH - 30, 0));
                 centipedeCoolDown = 300;
             }
         }
@@ -205,8 +217,8 @@ public class Board extends JPanel implements ActionListener{
                 int randNum = rand.nextInt(2);
 
                 spider = new Spider(
-                        randNum * (Application.FRAME_WIDTH-30),
-                        rand.nextInt(Application.FRAME_HEIGHT),
+                        randNum * (Main.FRAME_WIDTH-30),
+                        rand.nextInt(Main.FRAME_HEIGHT),
                         (randNum == 0 ? 1 : -1) * (rand.nextInt(5) + 1),
                         rand.nextInt(5) + 1);
             }
@@ -228,11 +240,15 @@ public class Board extends JPanel implements ActionListener{
         updateSpider();
         if(!character.isVisible()){
             System.out.println("you died");
-            topBar.removeLife();
-            timer.stop(); // for now
-
-            reset();
-            timer.start();
+            if(topBar.removeLife()){
+                timer.stop(); // for now
+                reset();
+                timer.start();
+            }
+            else {
+                timer.stop();
+                isAlive = false;
+            }
         }
         repaint();
     }

@@ -62,15 +62,17 @@ public class TopBar extends JPanel {
         repaint();
     }
 
-    public void removeLife() {
+    public boolean removeLife() {
         if(lifeLabels.size() != 0) {
             lifeBar.remove(lifeLabels.get(lifeLabels.size() - 1));
             lifeLabels.remove(lifeLabels.size() - 1);
             repaint();
+            return true;
         }
         else{
             // show you died..
             // restart?
+            return false;
         }
     }
 }
